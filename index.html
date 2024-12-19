@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>você consegue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #FFC0CB;
+        }
+        img {
+            width: 300px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #007BFF;
+            color: white;
+            transform: scale(1.1);
+        }
+        .btn-reset {
+            background-color: #FF5733;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #C70039;
+        }
+        .counter {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>você consegue</h1>
+    <img src="rem.jpeg" alt="Imagem Exemplo">
+    <div>
+        <button onclick="adicionarNumero()">+ um dia </button>
+        <button class="btn-reset" onclick="resetarContador()">
+        quer desistir ?</button>
+    </div>
+    <div class="counter">dias sem umasinha: <span id="contador">0</span></div>
+    <div class="message" id="mensagem"></div>
+
+    <script>
+        // Carrega o valor inicial do contador do localStorage
+        let contador = parseInt(localStorage.getItem('contador')) || 0;
+
+        // Atualiza o texto do contador na página
+        const contadorElemento = document.getElementById('contador');
+        const mensagemElemento = document.getElementById('mensagem');
+
+        // Inicializa a exibição do contador e da mensagem
+        contadorElemento.textContent = contador;
+        atualizarMensagem(contador);
+
+        // Solicitar permissão para notificações
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Adiciona 1 ao contador
+        function adicionarNumero() {
+            contador++;
+            localStorage.setItem('contador', contador); // Salva no localStorage
+            contadorElemento.textContent = contador; // Atualiza na página
+            atualizarMensagem(contador);
+
+            // Envia uma notificação ao usuário
+            if (Notification.permission === "granted") {
+                new Notification("Ótimo trabalho!", {
+                    body: `Você já alcançou ${contador} dias! Continue assim!`,
+                    icon: "rem.jpeg" // Altere para o caminho correto da sua imagem
+                });
+            }
+        }
+
+        // Reseta o contador
+        function resetarContador() {
+            contador = 0;
+            localStorage.setItem('contador', contador); // Reseta no localStorage
+            contadorElemento.textContent = contador; // Atualiza na página
+            atualizarMensagem(contador);
+
+            if (Notification.permission === "granted") {
+                new Notification("Contador reiniciado", {
+                    body: "Não desista, comece novamente e você conseguirá!",
+                    icon: "rem.jpeg" // Altere para o caminho correto da sua imagem
+                });
+            }
+        }
+
+        // Atualiza a mensagem com base no número do contador
+        function atualizarMensagem(valor) {
+            if (valor === 0) {
+                mensagemElemento.textContent = "Clique no botão para começar a contar!";
+            } else if (valor < 10) {
+                mensagemElemento.textContent = "Bom começo! Continue clicando.";
+            } else if (valor < 50) {
+                mensagemElemento.textContent = "Você está indo bem! Já passou de 10.";
+            } else {
+                mensagemElemento.textContent = "Uau! Mais de 50 cliques, impressionante!";
+            }
+        }
+    </script>
+</body>
+</html>
